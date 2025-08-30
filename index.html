@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What This Website Knows About You</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0ea5e9;
+            --accent: #06b6d4;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --tooltip-bg: #1e293b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Header styles */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 30px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Controls section */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.2);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #64748b, #94a3b8);
+            box-shadow: 0 4px 6px rgba(100, 116, 139, 0.15);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 6px 12px rgba(100, 116, 139, 0.2);
+            background: linear-gradient(135deg, #475569, #64748b);
+        }
+        
+        /* Card grid layout */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            grid-column: 1 / -1;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--accent);
+        }
+        
+        /* Card styles */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s ease forwards;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: visible;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--text);
+            font-weight: 600;
+        }
+        
+        .card-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            word-break: break-all;
+        }
+        
+        .info-icon {
+            cursor: help;
+            color: var(--accent);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .info-icon:hover {
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+        
+        /* Disclaimer section */
+        .disclaimer {
+            background: linear-gradient(to right, #e0f2fe, #f0f9ff);
+            border-left: 4px solid var(--accent);
+            padding: 24px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .disclaimer h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .disclaimer h3 i {
+            color: var(--accent);
+        }
+        
+        /* Footer styles */
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.2s; }
+        .card:nth-child(4) { animation-delay: 0.3s; }
+        .card:nth-child(5) { animation-delay: 0.4s; }
+        .card:nth-child(6) { animation-delay: 0.5s; }
+        .card:nth-child(7) { animation-delay: 0.6s; }
+        .card:nth-child(8) { animation-delay: 0.7s; }
+        .card:nth-child(9) { animation-delay: 0.8s; }
+        .card:nth-child(10) { animation-delay: 0.9s; }
+        .card:nth-child(11) { animation-delay: 1s; }
+        .card:nth-child(12) { animation-delay: 1.1s; }
+        
+        /* Fixed Tooltip - Corrected positioning */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            z-index: 1;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: var(--tooltip-bg);
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: normal;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            line-height: 1.4;
+        }
+        
+        .tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--tooltip-bg) transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        /* Status indicators */
+        .status-on {
+            color: var(--success);
+        }
+        
+        .status-off {
+            color: #ef4444;
+        }
+        
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(37, 99, 235, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .card::before {
+                width: 100%;
+                height: 5px;
+            }
+            
+            /* Adjust tooltip for mobile */
+            .tooltip .tooltip-text {
+                width: 200px;
+                font-size: 0.8rem;
+                left: 50%;
+                transform: translateX(-50%) translateY(10px);
+            }
+            
+            .tooltip:hover .tooltip-text {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>What This Website Knows About You</h1>
+        <p class="description">This page shows what information websites can access from your browser without asking for permission.</p>
+    </header>
+    
+    <div class="controls">
+        <button id="refresh-btn" class="btn">
+            <i class="fas fa-sync-alt"></i> Refresh Data
+        </button>
+        <button id="copy-btn" class="btn btn-secondary">
+            <i class="fas fa-copy"></i> Copy All Info
+        </button>
+    </div>
+    
+    <main>
+        <div class="card-grid">
+            <h2 class="section-title">
+                <i class="fas fa-window-restore"></i> Browser Info
+            </h2>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-user-circle"></i> Browser User Agent
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">Identifies your browser and operating system</span>
+                    </span>
+                </h3>
+                <p id="user-agent" class="card-value"><span class="loading"></span></p>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-language"></i> Browser Language
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">Your browser's preferred language setting</span>
+                    </span>
+                </h3>
+                <p id="language" class="card-value"><span class="loading"></span></p>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-desktop"></i> Operating System
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">The operating system your device is running</span>
+                    </span>
+                </h3>
+                <p id="os" class="card-value"><span class="loading"></span></p>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-cookie-bite"></i> Cookies Enabled
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">Whether your browser allows cookies</span>
+                    </span>
+                </h3>
+                <p id="cookies" class="card-value"><span class="loading"></span></p>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-user-shield"></i> Do Not Track Status
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">Whether you've requested not to be tracked</span>
+                    </span>
+                </h3>
+                <p id="dnt" class="card-value"><span class="loading"></span></p>
+            </div>
+        </div>
+        
+        <div class="card-grid">
+            <h2 class="section-title">
+                <i class="fas fa-tablet-alt"></i> Device & Display Info
+            </h2>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-desktop"></i> Screen Resolution
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">The dimensions of your screen in pixels</span>
+                    </span>
+                </h3>
+                <p id="resolution" class="card-value"><span class="loading"></span></p>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-th"></i> Pixel Ratio
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">The ratio between physical and device-independent pixels</span>
+                    </span>
+                </h3>
+                <p id="pixel-ratio" class="card-value"><span class="loading"></span></p>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-microchip"></i> Number of CPU Cores
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">The number of processor cores in your device (if supported)</span>
+                    </span>
+                </h3>
+                <p id="cpu-cores" class="card-value"><span class="loading"></span></p>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-memory"></i> Approximate RAM
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">The amount of memory in your device (if supported)</span>
+                    </span>
+                </h3>
+                <p id="ram" class="card-value"><span class="loading"></span></p>
+            </div>
+        </div>
+        
+        <div class="card-grid">
+            <h2 class="section-title">
+                <i class="fas fa-wifi"></i> Network Info
+            </h2>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-network-wired"></i> Online/Offline Status
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">Whether your device is currently connected to the internet</span>
+                    </span>
+                </h3>
+                <p id="online-status" class="card-value"><span class="loading"></span></p>
+            </div>
+        </div>
+        
+        <div class="card-grid">
+            <h2 class="section-title">
+                <i class="fas fa-clock"></i> Time & Location
+            </h2>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-clock"></i> Local Device Time
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">The current time on your device</span>
+                    </span>
+                </h3>
+                <p id="local-time" class="card-value"><span class="loading"></span></p>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-globe"></i> Timezone Name
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">Your current time zone</span>
+                    </span>
+                </h3>
+                <p id="timezone" class="card-value"><span class="loading"></span></p>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-map-marker-alt"></i> Public IP Address
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">Your public internet address</span>
+                    </span>
+                </h3>
+                <p id="ip-address" class="card-value"><span class="loading"></span></p>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-map-pin"></i> Approximate Location
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">Your approximate location based on IP address</span>
+                    </span>
+                </h3>
+                <p id="location" class="card-value"><span class="loading"></span></p>
+            </div>
+        </div>
+        
+        <div class="card-grid">
+            <h2 class="section-title">
+                <i class="fas fa-cogs"></i> Miscellaneous
+            </h2>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fab fa-js"></i> JavaScript Enabled
+                    <span class="tooltip info-icon"><i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">Whether JavaScript is enabled in your browser</span>
+                    </span>
+                </h3>
+                <p id="javascript" class="card-value"><span class="loading"></span></p>
+            </div>
+        </div>
+        
+        <div class="disclaimer">
+            <h3><i class="fas fa-info-circle"></i> Important Note</h3>
+            <p>Websites cannot access sensitive data like your files, camera, microphone, or exact location without explicit permission. This page only shows information that is automatically shared by your browser.</p>
+        </div>
+    </main>
+    
+    <footer>
+        <p>Built by Your Name — For Awareness Purposes Only.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const refreshBtn = document.getElementById('refresh-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            
+            // Function to detect OS from user agent
+            function detectOS() {
+                const userAgent = window.navigator.userAgent;
+                const platform = window.navigator.platform;
+                
+                if (/Macintosh|MacIntel|MacPPC|Mac68K/.test(platform)) return 'macOS';
+                if (/Win32|Win64|Windows|WinCE/.test(platform)) return 'Windows';
+                if (/Linux/.test(platform)) return 'Linux';
+                if (/Android/.test(userAgent)) return 'Android';
+                if (/iOS|iPhone|iPad|iPod/.test(platform)) return 'iOS';
+                
+                return 'Unknown OS';
+            }
+            
+            // Function to get approximate RAM (if supported)
+            function getApproximateRAM() {
+                if (navigator.deviceMemory) {
+                    return `${navigator.deviceMemory} GB`;
+                }
+                return 'Not supported';
+            }
+            
+            // Function to get CPU cores (if supported)
+            function getCPUCores() {
+                if (navigator.hardwareConcurrency) {
+                    return navigator.hardwareConcurrency;
+                }
+                return 'Not supported';
+            }
+            
+            // Function to get location from IP
+            async function getLocationFromIP() {
+                try {
+                    const response = await fetch('https://ipapi.co/json/');
+                    const data = await response.json();
+                    
+                    document.getElementById('ip-address').textContent = data.ip;
+                    
+                    let locationText = '';
+                    if (data.city) locationText += `${data.city}, `;
+                    if (data.region) locationText += `${data.region}, `;
+                    if (data.country_name) locationText += data.country_name;
+                    
+                    document.getElementById('location').textContent = locationText || 'Location data unavailable';
+                } catch (error) {
+                    document.getElementById('ip-address').textContent = 'Failed to retrieve';
+                    document.getElementById('location').textContent = 'Failed to retrieve location';
+                    console.error('Error fetching IP data:', error);
+                }
+            }
+            
+            // Function to update all data
+            function updateAllData() {
+                // Browser Info
+                document.getElementById('user-agent').textContent = navigator.userAgent || 'Not available';
+                document.getElementById('language').textContent = navigator.language || 'Not available';
+                document.getElementById('os').textContent = detectOS();
+                document.getElementById('cookies').textContent = navigator.cookieEnabled ? 'Enabled' : 'Disabled';
+                document.getElementById('dnt').textContent = navigator.doNotTrack || 'Not specified';
+                
+                // Device & Display Info
+                document.getElementById('resolution').textContent = `${window.screen.width} × ${window.screen.height}`;
+                document.getElementById('pixel-ratio').textContent = window.devicePixelRatio || 'Not available';
+                document.getElementById('cpu-cores').textContent = getCPUCores();
+                document.getElementById('ram').textContent = getApproximateRAM();
+                
+                // Network Info
+                const onlineStatus = document.getElementById('online-status');
+                onlineStatus.textContent = navigator.onLine ? 'Online' : 'Offline';
+                onlineStatus.className = navigator.onLine ? 'card-value status-on' : 'card-value status-off';
+                
+                // Time & Location
+                const now = new Date();
+                document.getElementById('local-time').textContent = now.toLocaleString();
+                document.getElementById('timezone').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                
+                // Get IP and location
+                getLocationFromIP();
+                
+                // Miscellaneous
+                document.getElementById('javascript').textContent = 'Enabled';
+                document.getElementById('javascript').className = 'card-value status-on';
+            }
+            
+            // Function to copy all data to clipboard
+            function copyAllDataToClipboard() {
+                let dataToCopy = "BROWSER INFORMATION AWARENESS REPORT\n";
+                dataToCopy += "Generated on: " + new Date().toLocaleString() + "\n\n";
+                
+                // Browser Info
+                dataToCopy += "=== BROWSER INFO ===\n";
+                dataToCopy += "User Agent: " + (navigator.userAgent || 'Not available') + "\n";
+                dataToCopy += "Language: " + (navigator.language || 'Not available') + "\n";
+                dataToCopy += "OS: " + detectOS() + "\n";
+                dataToCopy += "Cookies Enabled: " + (navigator.cookieEnabled ? 'Yes' : 'No') + "\n";
+                dataToCopy += "Do Not Track: " + (navigator.doNotTrack || 'Not specified') + "\n\n";
+                
+                // Device & Display Info
+                dataToCopy += "=== DEVICE & DISPLAY INFO ===\n";
+                dataToCopy += "Screen Resolution: " + window.screen.width + " × " + window.screen.height + "\n";
+                dataToCopy += "Pixel Ratio: " + (window.devicePixelRatio || 'Not available') + "\n";
+                dataToCopy += "CPU Cores: " + getCPUCores() + "\n";
+                dataToCopy += "Approximate RAM: " + getApproximateRAM() + "\n\n";
+                
+                // Network Info
+                dataToCopy += "=== NETWORK INFO ===\n";
+                dataToCopy += "Online Status: " + (navigator.onLine ? 'Online' : 'Offline') + "\n\n";
+                
+                // Time & Location
+                dataToCopy += "=== TIME & LOCATION ===\n";
+                dataToCopy += "Local Time: " + new Date().toLocaleString() + "\n";
+                dataToCopy += "Timezone: " + Intl.DateTimeFormat().resolvedOptions().timeZone + "\n";
+                
+                // Get IP and location info for copying
+                const ipElement = document.getElementById('ip-address');
+                const locationElement = document.getElementById('location');
+                
+                dataToCopy += "IP Address: " + (ipElement.textContent !== 'Detecting...' ? ipElement.textContent : 'Loading...') + "\n";
+                dataToCopy += "Approximate Location: " + (locationElement.textContent !== 'Detecting...' ? locationElement.textContent : 'Loading...') + "\n\n";
+                
+                // Miscellaneous
+                dataToCopy += "=== MISCELLANEOUS ===\n";
+                dataToCopy += "JavaScript Enabled: Yes\n\n";
+                
+                dataToCopy += "Note: Websites cannot access sensitive data like your files, camera, microphone, or exact location without explicit permission.";
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(dataToCopy).then(() => {
+                    // Show a temporary confirmation on the button
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    alert('Failed to copy information to clipboard. Please try again.');
+                });
+            }
+            
+            // Event listeners
+            refreshBtn.addEventListener('click', updateAllData);
+            copyBtn.addEventListener('click', copyAllDataToClipboard);
+            
+            // Initial data load
+            setTimeout(updateAllData, 1000);
+            
+            // Update time every minute
+            setInterval(() => {
+                document.getElementById('local-time').textContent = new Date().toLocaleString();
+            }, 60000);
+        });
+    </script>
+</body>
+</html>
