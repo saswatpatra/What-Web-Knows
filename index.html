@@ -579,14 +579,14 @@
             
             // Function to detect OS from user agent
             function detectOS() {
-                const userAgent = window.navigator.userAgent;
-                const platform = window.navigator.platform;
+                const userAgent = window.navigator.userAgent.toLowerCase();
+                const platform = window.navigator.platform.toLowerCase();
                 
-                if (/Macintosh|MacIntel|MacPPC|Mac68K/.test(platform)) return 'macOS';
-                if (/Win32|Win64|Windows|WinCE/.test(platform)) return 'Windows';
-                if (/Linux/.test(platform)) return 'Linux';
-                if (/Android/.test(userAgent)) return 'Android';
-                if (/iOS|iPhone|iPad|iPod/.test(platform)) return 'iOS';
+                if (userAgent.includes("android")) return "Android";
+                if (userAgent.includes("iphone") || userAgent.includes("ipad") || userAgent.includes("ipod")) return "iOS";
+                if (platform.includes("mac")) return "macOS";
+                if (platform.includes("win")) return "Windows";
+                if (platform.includes("linux")) return "Linux";
                 
                 return 'Unknown OS';
             }
